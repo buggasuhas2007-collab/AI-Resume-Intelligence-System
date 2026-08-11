@@ -1,23 +1,13 @@
-from typing import Optional
-
 from pydantic import BaseModel, Field
 
-class Document(BaseModel):
-    """
-    Standard representaion of any extracted document
 
-    This Model is independent of the source document type
-    (PDF, DOCX, Image, HTMl, etc..)
+class Document(BaseModel):
+    """A plain-text document extracted from a source file (V1: PDFs only).
+
+    Downstream components depend only on `text`, so the extraction source
+    (PDF today; DOCX, images+OCR later) can change without touching them.
     """
-    text : str
-    
-    metadata :dict = Field(default_factory=dict)
-    
-    filename : Optional[str] = None
-    
-    file_type : Optional[str] = None
-    
-    page_count: Optional[int] = None
-    
-    warnings: list[str] = Field(default_factory=list)
-    
+
+    text: str = Field(min_length=1)
+    source_name: str | None = None
+    page_count: int | None = Field(default=None, ge=1)
